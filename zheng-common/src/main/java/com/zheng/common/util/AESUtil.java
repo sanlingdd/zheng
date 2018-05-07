@@ -1,15 +1,19 @@
 package com.zheng.common.util;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * AES加解密工具类
@@ -55,7 +59,7 @@ public class AESUtil {
             //这里用Base64Encoder中会找不到包
             //解决办法：
             //在项目的Build path中先移除JRE System Library，再添加库JRE System Library，重新编译后就一切正常了。
-            String aesEncode = new String(new BASE64Encoder().encode(byteAES));
+            String aesEncode = new String(Base64.getMimeEncoder().encodeToString(byteAES));
             //11.将字符串返回
             return aesEncode;
         } catch (NoSuchAlgorithmException e) {
@@ -102,7 +106,7 @@ public class AESUtil {
             //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
             cipher.init(Cipher.DECRYPT_MODE, key);
             //8.将加密并编码后的内容解码成字节数组
-            byte[] byteContent = new BASE64Decoder().decodeBuffer(content);
+            byte[] byteContent = Base64.getMimeDecoder().decode(content);
             /*
              * 解密
              */
@@ -129,7 +133,7 @@ public class AESUtil {
 
     public static void main(String[] args) {
         String[] keys = {
-                "", "123456"
+                "", "Initial0"
         };
         System.out.println("key | AESEncode | AESDecode");
         for (String key : keys) {
